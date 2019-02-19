@@ -17,11 +17,28 @@ sub process_seq_files{
 			@seq = convert_linefeeds($seq[0]);
 		}
 		$seq[0] =~ />(.+?)_PREMIX/;
-		$seqs{$1} = $seq[1];
+		
+		my $trimSeq = quality_filtering($seq[1]);
+		if($trimSeq eq "BAD"){
+			next;
+		}else{
+			$seqs{$1} = $trimSeq;
+		}
 	}
 	return(\%seqs);
 }
 
+sub quality_filtering{
+	my $seq = $_[0];
+	my $trimSeq = rm_leading_and_trailing_Ns($seq);
+	my $numN = () = $trimSeq =~ /N/g;
+	my $len = length($trimSeq);
+	if($numN/$len >= 0.1 || $len < 400){
+		return("BAD");
+	}else{
+		return($trimSeq);
+	}
+}
 sub process_meta_data{
 	my $metaData = $_[0];
 	open(META, "$metaData") || die "Can't open metadata\n";
@@ -58,6 +75,20 @@ sub convert_linefeeds{
 	my $line = $_[0];
 	$line =~ s/\r|\r\n|\n/\n/g;
 	return(split("\n", $line));
+}
+
+sub rm_leading_and_trailing_Ns{
+	my $seq = $_[0];
+	
+	while($seq =~ /^N/ || $seq =~ /^[ATCGatcg]N+/ ){
+		$seq =~ s/^N+//;
+		$seq =~ s/^[ATCGatcg]N+//;
+	}
+	while($seq =~ /N$/ || $seq =~ /N+[ATCGatcg]$/ ){
+		$seq =~ s/N+$//;
+		$seq =~ s/N+[ATCGatcg]$//;
+	}
+	return($seq);
 }
 
 sub reverse_complement{
