@@ -24,11 +24,11 @@ plot.phylo(EF1a_nj)
 plot.phylo(RPB2_nj)
 
 pdf("~/GARNAS_neonectria_EF1a_RPB2_seqs/EF-1a_NJ.pdf", width = 10, height = 10)
-plot.phylo(EF1a_nj)
+print(plot.phylo(EF1a_nj))
 dev.off()
 
 pdf("~/GARNAS_neonectria_EF1a_RPB2_seqs/RPB2_NJ.pdf", width = 10, height = 10)
-plot.phylo(RPB2_nj)
+print(plot.phylo(RPB2_nj))
 dev.off()
 
 
@@ -37,12 +37,12 @@ EF1a_nj.dend = force.ultrametric(EF1a_nj) %>% as.dendrogram
 RPB2_nj.dend = force.ultrametric(RPB2_nj) %>% as.dendrogram
 
 pdf("~/GARNAS_neonectria_EF1a_RPB2_seqs/EF-1a_NJ_col_leaves.pdf", width = 24, height = 10)
-ggplot(EF1a_nj.dend  %>% hang.dendrogram(0.05) %>% set("labels_col", k = 8, value = cbPalette), horiz = T)
+print(ggplot(EF1a_nj.dend  %>% hang.dendrogram(0.05) %>% set("labels_col", k = 8, value = cbPalette), horiz = T))
 dev.off()
 
 #cut does not seem to be working properly on ggdend object (i.e. not correctly choosing groups correcty)
 pdf("~/GARNAS_neonectria_EF1a_RPB2_seqs/RPB2_NJ_col_leaves.pdf", width = 24, height = 10)
-ggplot(RPB2_nj.dend  %>% hang.dendrogram(0.05) %>% set("labels_col", k = 4, value = cbPalette), horiz = T)
+print(ggplot(RPB2_nj.dend  %>% hang.dendrogram(0.05) %>% set("labels_col", k = 4, value = cbPalette), horiz = T))
 dev.off()
 
 #
