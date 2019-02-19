@@ -9,7 +9,7 @@ Phylogenetic analysis of EF-1alpha and RPB2 sequences
 	
 	#sed -i.bak "s/ /./g" reference_seqs_EF-1a_RPB2_cat.fasta 
 	#sed -i.bak "s/ /./g" 021519_EF-1a_RPB2_cat.fasta 
-rm *.bak
+	rm *.bak
 
 	#cat reference_seqs_EF-1a_RPB2_cat.fasta 021519_EF-1a_RPB2_cat.fasta > refs_w_queries.fasta
 
