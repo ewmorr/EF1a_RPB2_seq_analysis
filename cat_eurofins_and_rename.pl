@@ -8,6 +8,7 @@ use warnings;
 
 sub process_seq_files{
 	my $seqDir = $_[0];
+	my $trimProp = $_[1];
 	chomp(my @files = `ls $seqDir/*.seq`);
 	my %seqs;
 	foreach my $file (@files){
@@ -18,7 +19,7 @@ sub process_seq_files{
 		}
 		$seq[0] =~ />(.+?)_PREMIX/;
 		
-		my $trimSeq = quality_filtering($seq[1]);
+		my $trimSeq = quality_filtering($seq[1], $trimProp);
 		if($trimSeq eq "BAD"){
 			next;
 		}else{
@@ -30,10 +31,11 @@ sub process_seq_files{
 
 sub quality_filtering{
 	my $seq = $_[0];
+	my $trimProp = $_[1];
 	my $trimSeq = rm_leading_and_trailing_Ns($seq);
 	my $numN = () = $trimSeq =~ /N/g;
 	my $len = length($trimSeq);
-	if($numN/$len >= 0.1 || $len < 400){
+	if($numN/$len >= $trimProp || $len < 400){
 		return("BAD");
 	}else{
 		return($trimSeq);
@@ -98,12 +100,30 @@ sub reverse_complement{
 	return($seq);
 }
 
+sub usage{
+	print(q(
+Usage: perl cat_eurofins_and_rename.pl sequence_dir metadata 0.xx
+	
+	This script processes sequences from a directory of sanger sequencing results from Eurofins.
+	The dir is the first argument provided, and a metadata file is the second argument.
+	The third argument should be a proportion for quality filtering.
+	Sequences with a proportion of Ns greater than the supplied value will be excluded from the output.
+		
+)
+	);
+	exit;
+}
 #MAIN
 {
 	my $seqDir = $ARGV[0];
 	my $metaData = $ARGV[1];
+	my $trimProp = $ARGV[2];
 	
-	my $seqRef = process_seq_files($seqDir);
+	if(@ARGV == 0 || $ARGV[0] =~ /-h|--help|--h/){
+		usage();
+	}
+	
+	my $seqRef = process_seq_files($seqDir, $trimProp);
 	my $metaRef = process_meta_data($metaData);
 	replace_names_print($seqRef, $metaRef);
 }
